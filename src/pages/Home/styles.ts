@@ -84,26 +84,46 @@ export const Separator = styled.div`
   justify-content: center;
 `;
 
-export const StartCountdownButton = styled.button`
+const BaseButton = styled.button`
   width: 100%;
   height: 4rem;
   border-radius: 8px;
   border: 0;
-  background-color: ${(props) => props.theme["green-500"]};
-  color: ${(props) => props.theme["gray-100"]};
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   font-weight: bold;
   cursor: pointer;
+  color: ${(props) => props.theme["gray-100"]};
 
-  &:hover:not(:disabled) {
-    background-color: ${(props) => props.theme["green-700"]};
+  &:focus {
+    box-shadow: none;
   }
 
   &:disabled {
     opacity: 0.7;
     cursor: not-allowed;
   }
+`;
+
+export const StartCountdownButton = styled(BaseButton)`
+  background-color: ${(props) => props.theme["green-500"]};
+
+  &:hover:not(:disabled) {
+    background-color: ${(props) => props.theme["green-700"]};
+  }
+`;
+
+export const StopCountdownButton = styled(BaseButton)`
+  background-color: ${(props) => props.theme["red-500"]};
+
+  &:hover:not(:disabled) {
+    background-color: ${(props) => props.theme["red-700"]};
+  }
+`;
+
+export const ActiveCycleTitle = styled.h1`
+  font-weight: 700;
+  font-size: 2rem;
 `;
