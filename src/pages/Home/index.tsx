@@ -1,4 +1,4 @@
-import { Divide, HandPalm, Play } from "phosphor-react";
+import { HandPalm, Play } from "phosphor-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
@@ -30,6 +30,7 @@ interface Cycle {
   minutesAmount: number;
   startDate: Date;
   interruptedDate?: Date;
+  finishedDate?: Date;
 }
 
 export const Home = () => {
@@ -92,16 +93,33 @@ export const Home = () => {
 
     if (activeCycle) {
       interval = setInterval(() => {
-        setAmountSecondsPast(
-          differenceInSeconds(new Date(), activeCycle.startDate)
+        const secondsDifference = differenceInSeconds(
+          new Date(),
+          activeCycle.startDate
         );
+
+        if (secondsDifference >= totalSeconds) {
+          setCycles((state) => {
+            return state.map((cycle) => {
+              if (cycle.id === activeCycleId) {
+                return { ...cycle, finishedDate: new Date() };
+              } else {
+                return cycle;
+              }
+            });
+          });
+          setAmountSecondsPast(totalSeconds);
+          clearInterval(interval);
+        } else {
+          setAmountSecondsPast(secondsDifference);
+        }
       }, 1000);
     }
 
     return () => {
       clearInterval(interval);
     };
-  }, [activeCycle]);
+  }, [activeCycle, activeCycleId, totalSeconds]);
 
   useEffect(() => {
     if (activeCycle) {
