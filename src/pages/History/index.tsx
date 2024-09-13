@@ -31,7 +31,7 @@ export const History = () => {
                   {formatDistanceToNow(new Date(cycle.startDate), {
                     addSuffix: true,
                     //@ts-ignore
-                    locale: ptBr,
+                    locale: ptBr.ptBR,
                   })}
                 </td>
                 <td>
