@@ -1,5 +1,6 @@
 import { Cycle } from "../../context/CyclesContext";
 import { ActionTypes } from "./actions";
+import { produce } from "immer";
 
 interface CycleActions {
   type: ActionTypes;
@@ -14,35 +15,36 @@ interface CyclesState {
 export function cyclesReducer(state: CyclesState, action: CycleActions) {
   switch (action.type) {
     case ActionTypes.ADD_NEW:
-      return {
-        ...state,
-        cycles: [...state.cycles, action.payload.newCycle],
-        activeCycleId: action.payload.newCycle.id,
-      };
+      return produce(state, (draft) => {
+        draft.cycles.push(action.payload.newCycle);
+        draft.activeCycleId = action.payload.newCycle.id;
+      });
     case ActionTypes.FINISH_CURRENT:
-      return {
-        ...state,
-        cycles: state.cycles.map((cycle) => {
-          if (cycle.id === state.activeCycleId) {
-            return { ...cycle, finishedDate: new Date() };
-          } else {
-            return cycle;
-          }
-        }),
-        activeCycleId: null,
-      };
+      return produce(state, (draft) => {
+        const cycleIndex = state.cycles.findIndex(
+          (item) => item.id === draft.activeCycleId
+        );
+
+        if (cycleIndex < 0) {
+          return state;
+        }
+
+        draft.cycles[cycleIndex].finishedDate = new Date();
+        draft.activeCycleId = null;
+      });
     case ActionTypes.INTERRUPT_CURRENT:
-      return {
-        ...state,
-        cycles: state.cycles.map((cycle) => {
-          if (cycle.id === state.activeCycleId) {
-            return { ...cycle, interruptedDate: new Date() };
-          } else {
-            return cycle;
-          }
-        }),
-        activeCycleId: null,
-      };
+      return produce(state, (draft) => {
+        const cycleIndex = state.cycles.findIndex(
+          (item) => item.id === draft.activeCycleId
+        );
+
+        if (cycleIndex < 0) {
+          return state;
+        }
+
+        draft.cycles[cycleIndex].interruptedDate = new Date();
+        draft.activeCycleId = null;
+      });
     default:
       return state;
   }
